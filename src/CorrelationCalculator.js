@@ -10,7 +10,6 @@ class CorrelationCalculator {
   
   initialiseCalculator (newXArray, newYArray) {
     // not a constructor so the same calculator object can be reused for multiple calculations if desired after being initialised with no data
-    let success = true
     if (this.validateData(newXArray, newYArray)) {
       // store the data as long as it is valid
       this.xArray = newXArray
@@ -20,9 +19,8 @@ class CorrelationCalculator {
       })
       this.itemCount = this.xArray.length
     } else {
-      success = false
+      throw new Error('Array lengths did not match')
     }
-    return success
   }
   
   sumArrayElements(inputArray) {
@@ -69,8 +67,15 @@ class CorrelationCalculator {
   
   runCalculator(newXArray, newYArray) {
     let output = null
-    if (this.initialiseCalculator(newXArray, newYArray)) {
+    try {
+      this.initialiseCalculator(newXArray, newYArray)
       output = this.performCalculation()
+    } catch (error) {
+      if (error.message === 'Array lengths did not match') {
+        output = error.message
+      } else {
+        throw error
+      }
     }
     console.log(output)
     return output
