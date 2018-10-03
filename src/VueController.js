@@ -13,6 +13,8 @@ function main() {
       inputArrayOne: [],
       inputArrayTwo: [],
       result: null,
+      inputMode: 'text',
+      delimiter: ',',
       calcType: '',
       displayScreen: 'Data Entry 1',
       validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results'],
@@ -35,9 +37,21 @@ function main() {
           console.warn('Change Screen Failed: Screen Was Not Valid')
         }
       },
+      toggleInputMode: function () {
+        this.inputMode = (this.inputMode === 'text') ? 'file' : 'text'
+        this.delimiter = (this.inputMode === 'text') ? ',' : '\r\n'
+      },
+      handleFileInput: function(e, arrayNum) {
+        let reader = new FileReader()
+        reader.onload = (e) => {
+          this.inputString = e.target.result
+          this.processInput(arrayNum)
+        }
+        reader.readAsText(e.target.files[0])
+      },
       processInput: function (arrayNum) {
         // split inputString on commas // future version - accepts the delimiter as an argument
-        let splitString = this.inputString.split(',')
+        let splitString = this.inputString.split(this.delimiter)
         // for each element in the array
         let outputArray = []
         splitString.forEach(aString => {

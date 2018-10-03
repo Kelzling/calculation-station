@@ -14,17 +14,26 @@
     <h2>Correlation + Regression</h2>
     <!-- If result exists while there is an error, it is because a calculation failed -->
     <p id="error-message" v-if="error"><span v-if="result">Calculation Failed.</span> Error: {{ error }}</p>
-    <input type="button" value="Reset Calculator" @click="resetCalculator">
+    <div id="top-buttons">
+      <input type="button" value="Reset Calculator" @click="resetCalculator">
+      <input type="button" v-if="/Data Entry [1,2]/.test(displayScreen)" v-bind:value="inputMode === 'text' ? 'Switch to File Input' : 'Switch to Text Input'" @click="toggleInputMode">
+    </div>
     
-    <div class="app-screen" v-if="displayScreen === 'Data Entry 1'">
+    <div class="app-screen" v-if="displayScreen === 'Data Entry 1' && inputMode === 'text'">
       <p>Please enter your first lot of data, separated by commas</p>
       
       <div class="data-input-container">
-        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(1)">
+        <input class="data-input" v-model="inputString" @keyup.enter="processInput(1)"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(1)">
       </div>
     </div>
     
-    <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2'">
+    <div class="app-screen" v-if="displayScreen === 'Data Entry 1' && inputMode === 'file'">
+      <p>Please load your first data file. Each data item should be on a new line.</p>
+      
+      <input type="file" @change="handleFileInput($event, 1)">
+    </div>
+    
+    <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2' && inputMode === 'text'">
       <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
       
       <div class="error-message">
@@ -33,8 +42,14 @@
       
       
       <div class="data-input-container">
-        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(2)">
+        <input class="data-input" v-model="inputString" @keyup.enter="processInput(2)"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(2)">
       </div>
+    </div>
+    
+    <div class="app-screen" v-if="displayScreen === 'Data Entry 2' && inputMode === 'file'">
+      <p>Please load your second data file. Please ensure both files have the same amount of numbers.</p>
+      
+      <input type="file" @change="handleFileInput($event, 2)">
     </div>
     
     <div class="app-screen" v-else-if="displayScreen === 'Choose Calculation'">
@@ -45,7 +60,7 @@
       </div>
     </div>
     
-    <div class="app-screen" v-else>
+    <div class="app-screen" v-else-if="displayScreen === 'Display Results'">
       <h3>{{ calcType }} calculated!</h3>
       
       <ul>
