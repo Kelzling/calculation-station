@@ -1,5 +1,6 @@
-var dataRow = {
-  template: '<tr><td>{{ number }}}</td></tr>'
+var dataTable = {
+  props: ['data'],
+  template: '<table><tr v-for="(number, index) in data" v-bind:key="index"><td>{{ number }}</td></tr></table>'
 }
 
 function main() {
@@ -13,11 +14,67 @@ function main() {
       inputArrayTwo: [],
       result: null,
       calcType: '',
-      displayScreen: 'Data Entry 1'
+      displayScreen: 'Data Entry 1',
+      validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results'],
+      error: ''
     },
-    methods: {},
+    methods: {
+      resetCalculator: function () {
+        this.inputString = ''
+        this.inputArrayOne = []
+        this.inputArrayTwo = []
+        this.result = null
+        this.calcType = ''
+        this.changeScreen('Data Entry 1')
+      },
+      changeScreen: function (newScreen) {
+      if (this.validScreens.includes(newScreen)) {
+          this.displayScreen = newScreen
+          this.error = ''
+        } else {
+          console.warn('Change Screen Failed: Screen Was Not Valid')
+        }
+      },
+      processInput: function (arrayNum) {
+        // split inputString on commas // future version - accepts the delimiter as an argument
+        let splitString = this.inputString.split(',')
+        // for each element in the array
+        let outputArray = []
+        splitString.forEach(aString => {
+          // trim any white spaces off the ends, convert to a number, push into outputArray
+          let aNum = Number(aString.trim())
+          if (!isNaN(aNum)) {
+            outputArray.push(aNum)
+          } else {
+            this.error = `${aString} could not be converted into a number`
+          }
+        })
+        this.inputString = ''
+        if (arrayNum === 1) {
+          this.inputArrayOne = outputArray
+          this.changeScreen('Data Entry 2')
+        } else if (arrayNum === 2) {
+          this.inputArrayTwo = outputArray
+          this.changeScreen('Choose Calculation')
+        }
+      },
+      performCalculation: function (type) {
+        this.calcType = type
+        if (this.calcType === 'correlation') {
+          this.result = this.myCorrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
+        } else if (this.calcType === 'regression') {
+          this.result = this.myRegrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
+        }
+        if (typeof this.result === 'object' && this.result) { // typeof null also evaluates to object so also checking if result is true to make sure the object actually contains something
+          this.changeScreen('Display Results')
+        } else if (typeof this.result === 'string') {
+          // if it's a string, there's an error, so we kick them back to the start screen.
+          this.changeScreen('Data Entry 1')
+        }
+      }
+    },
     components: {
-      'data-row': dataRow
+      'data-table': dataTable
     }
   })
 }

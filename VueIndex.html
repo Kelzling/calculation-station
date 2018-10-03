@@ -12,32 +12,41 @@
   <div id="vue-app">
     <h1>Calculator</h1>
     <h2>Correlation + Regression</h2>
-    <input type="button" value="Reset Calculator" @click="reset">
+    <!-- If result exists while there is an error, it is because a calculation failed -->
+    <p id="error-message" v-if="error"><span v-if="result">Calculation Failed.</span> Error: {{ error }}</p>
+    <input type="button" value="Reset Calculator" @click="resetCalculator">
     
     <div class="app-screen" v-if="displayScreen === 'Data Entry 1'">
       <p>Please enter your first lot of data, separated by commas</p>
+      
       <div class="data-input-container">
-        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput">
+        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(1)">
       </div>
     </div>
     
     <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2'">
       <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
+      
+      <div class="error-message">
+        <p v-if="error">{{ error }}</p>
+      </div>
+      
+      
       <div class="data-input-container">
-        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput">
+        <input class="data-input" v-model="inputString"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(2)">
       </div>
     </div>
     
     <div class="app-screen" v-else-if="displayScreen === 'Choose Calculation'">
       <p>Would you like to calculate the correlation or the regression of your data?</p>
       <div id="calcType-btns">
-        <input type="button" value="Correlation"> <!-- @click for these two is performCalculation(calcType) - look up how to do this better -->
-        <input type="button" value="Regression">
+        <input type="button" value="Correlation" @click="performCalculation('correlation')">
+        <input type="button" value="Regression" @click="performCalculation('regression')">
       </div>
     </div>
     
     <div class="app-screen" v-else>
-      <p>{{ calcType }} calculated</p>
+      <h3>{{ calcType }} calculated!</h3>
       
       <ul>
         <li v-for="(value, key) in result">{{ key }}: {{ value }}</li>
@@ -45,15 +54,8 @@
     </div>
     
     <div id="data-display">
-      <table v-if="inputArrayOne">
-        <data-row v-for="(number, index) in inputArrayOne" v-bind:key="index">
-        </data-row>
-      </table>
+      <data-table v-if="inputArrayOne" v-bind:data="inputArrayOne"></data-table>
       
-      <table v-if="inputArrayTwo">
-        <data-row v-for="(number, index) in inputArrayTwo" v-bind:key="index">
-        </data-row>
-      </table>
+      <data-table v-if="inputArrayTwo" v-bind:data="inputArrayTwo"></data-table>
     </div>
-  </div>
 </body>

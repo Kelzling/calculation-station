@@ -39,6 +39,16 @@ h2 {
   margin-bottom: .5em;
 }
 
+h3 {
+  font-size: 1.25rem;
+  margin-bottom: .25em;
+}
+
+#error-message {
+  padding: .5em;
+  color: red;
+}
+
 .app-screen {
   margin: 1em;
   text-align: center;
@@ -61,10 +71,25 @@ h2 {
   padding: 0 1em;
 }
 
-tr {
-  border: 1px solid black;
+li {
+  list-style: none;
+}
+
+#data-display {
+  display: flex;
+  justify-content: space-around;
 }
 
 table {
   border-collapse: collapse;
+  margin: 2em;
+}
+
+tr {
+  border: 1px solid black;
+}
+
+td {
+  padding: .25em .5em;
+  text-align: center;
 }
