@@ -84,7 +84,7 @@ function main() {
         } else if (typeof this.result === 'string') {
           // if it's a string, there's an error, so we kick them back to the start screen.
           this.changeScreen('Data Entry 1')
-        }
+        } // should probably add something to handle whether something else is returned e.g. null
       }
     },
     components: {

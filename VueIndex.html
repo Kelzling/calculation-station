@@ -27,10 +27,10 @@
       </div>
     </div>
     
-    <div class="app-screen" v-if="displayScreen === 'Data Entry 1' && inputMode === 'file'">
+    <div class="app-screen" v-else-if="displayScreen === 'Data Entry 1' && inputMode === 'file'">
       <p>Please load your first data file. Each data item should be on a new line.</p>
       
-      <input type="file" @change="handleFileInput($event, 1)">
+      <input type="file" @change="handleFileInput($event, 1)" key="data-input-1">
     </div>
     
     <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2' && inputMode === 'text'">
@@ -46,10 +46,10 @@
       </div>
     </div>
     
-    <div class="app-screen" v-if="displayScreen === 'Data Entry 2' && inputMode === 'file'">
+    <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2' && inputMode === 'file'">
       <p>Please load your second data file. Please ensure both files have the same amount of numbers.</p>
       
-      <input type="file" @change="handleFileInput($event, 2)">
+      <input type="file" @change="handleFileInput($event, 2)" key="data-input-2">
     </div>
     
     <div class="app-screen" v-else-if="displayScreen === 'Choose Calculation'">
