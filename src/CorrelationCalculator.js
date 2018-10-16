@@ -14,9 +14,6 @@ class CorrelationCalculator {
       // store the data as long as it is valid
       this.xArray = newXArray
       this.yArray = newYArray
-      this.xyArray = this.xArray.map((number, index) => {
-        return number * this.yArray[index]
-      })
       this.itemCount = this.xArray.length
     } else {
       throw new Error('Array lengths did not match')
@@ -44,18 +41,24 @@ class CorrelationCalculator {
     return outputArray
   }
   
+  calculateDataComponents() {
+    this.xyArray = this.xArray.map((number, index) => {
+      return number * this.yArray[index]
+    })
+    this.xSum = this.sumArrayElements(this.xArray)
+    this.ySum = this.sumArrayElements(this.yArray)
+    this.xySum = this.sumArrayElements(this.xyArray)
+    this.xSqSum = this.sumArrayElements(this.squareArrayElements(this.xArray))
+    this.ySqSum = this.sumArrayElements(this.squareArrayElements(this.yArray))
+  }
+  
   performCalculation() {
     // top line of the equation
-    let xSum = this.sumArrayElements(this.xArray)
-    let ySum = this.sumArrayElements(this.yArray)
-    let xySum = this.sumArrayElements(this.xyArray)
-    let topLine = (this.itemCount * xySum) - (xSum * ySum)
+    let topLine = (this.itemCount * this.xySum) - (this.xSum * this.ySum)
     
     // bottom line of the calculation
-    let xSqSum = this.sumArrayElements(this.squareArrayElements(this.xArray))
-    let ySqSum = this.sumArrayElements(this.squareArrayElements(this.yArray))
-    let bottomLeft = this.itemCount * xSqSum - this.squareNumber(xSum)
-    let bottomRight = this.itemCount * ySqSum - this.squareNumber(ySum)
+    let bottomLeft = this.itemCount * xSqSum - this.squareNumber(this.xSum)
+    let bottomRight = this.itemCount * ySqSum - this.squareNumber(this.ySum)
     let bottomLine = Math.sqrt(bottomLeft * bottomRight)
     
     // generate and output results
@@ -69,6 +72,7 @@ class CorrelationCalculator {
     let output = null
     try {
       this.initialiseCalculator(newXArray, newYArray)
+      this.calculateDataComponents()
       output = this.performCalculation()
     } catch (error) {
       if (error.message === 'Array lengths did not match') {

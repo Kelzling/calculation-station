@@ -32,7 +32,7 @@ function main() {
       changeScreen: function (newScreen) {
       if (this.validScreens.includes(newScreen)) {
           this.displayScreen = newScreen
-          this.error = ''
+          // this.error = ''
         } else {
           console.warn('Change Screen Failed: Screen Was Not Valid')
         }
