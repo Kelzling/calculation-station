@@ -57,8 +57,8 @@ class CorrelationCalculator {
     let topLine = (this.itemCount * this.xySum) - (this.xSum * this.ySum)
     
     // bottom line of the calculation
-    let bottomLeft = this.itemCount * xSqSum - this.squareNumber(this.xSum)
-    let bottomRight = this.itemCount * ySqSum - this.squareNumber(this.ySum)
+    let bottomLeft = this.itemCount * this.xSqSum - this.squareNumber(this.xSum)
+    let bottomRight = this.itemCount * this.ySqSum - this.squareNumber(this.ySum)
     let bottomLine = Math.sqrt(bottomLeft * bottomRight)
     
     // generate and output results

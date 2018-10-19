@@ -17,7 +17,7 @@ function main() {
       delimiter: ',',
       calcType: '',
       displayScreen: 'Data Entry 1',
-      validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results'],
+      validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results', 'Error'],
       error: ''
     },
     methods: {
@@ -28,11 +28,11 @@ function main() {
         this.result = null
         this.calcType = ''
         this.changeScreen('Data Entry 1')
+        this.error = ''
       },
       changeScreen: function (newScreen) {
       if (this.validScreens.includes(newScreen)) {
           this.displayScreen = newScreen
-          // this.error = ''
         } else {
           console.warn('Change Screen Failed: Screen Was Not Valid')
         }
@@ -54,36 +54,44 @@ function main() {
         let splitString = this.inputString.split(this.delimiter)
         // for each element in the array
         let outputArray = []
-        splitString.forEach(aString => {
+        for (let aString of splitString) {
           // trim any white spaces off the ends, convert to a number, push into outputArray
           let aNum = Number(aString.trim())
           if (!isNaN(aNum)) {
             outputArray.push(aNum)
           } else {
             this.error = `${aString} could not be converted into a number`
+            break
           }
-        })
+        }
         this.inputString = ''
-        if (arrayNum === 1) {
-          this.inputArrayOne = outputArray
-          this.changeScreen('Data Entry 2')
-        } else if (arrayNum === 2) {
-          this.inputArrayTwo = outputArray
-          this.changeScreen('Choose Calculation')
+        if (!this.error) {
+          if (arrayNum === 1) {
+            this.inputArrayOne = outputArray
+            this.changeScreen('Data Entry 2')
+          } else if (arrayNum === 2) {
+            this.inputArrayTwo = outputArray
+            this.changeScreen('Choose Calculation')
+          }
+        } else {
+          this.changeScreen('Error')
         }
       },
       performCalculation: function (type) {
         this.calcType = type
+        let calc
         if (this.calcType === 'correlation') {
-          this.result = this.myCorrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
+          calc = this.myCorrCalc
         } else if (this.calcType === 'regression') {
-          this.result = this.myRegrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
+          calc = this.myRegrCalc
         }
+        this.result = calc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
         if (typeof this.result === 'object' && this.result) { // typeof null also evaluates to object so also checking if result is true to make sure the object actually contains something
           this.changeScreen('Display Results')
         } else if (typeof this.result === 'string') {
           // if it's a string, there's an error, so we kick them back to the start screen.
-          this.changeScreen('Data Entry 1')
+          this.error = this.result
+          this.changeScreen('Error')
         } // should probably add something to handle whether something else is returned e.g. null
       }
     },

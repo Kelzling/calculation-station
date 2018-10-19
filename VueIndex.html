@@ -12,8 +12,7 @@
   <div id="vue-app">
     <h1>Calculator</h1>
     <h2>Correlation + Regression</h2>
-    <!-- If result exists while there is an error, it is because a calculation failed -->
-    <p id="error-message" v-if="error"><span v-if="result">Calculation Failed.</span> Error: {{ error }}</p>
+    
     <div id="top-buttons">
       <input type="button" value="Reset Calculator" @click="resetCalculator">
       <input type="button" v-if="/Data Entry [1,2]/.test(displayScreen)" v-bind:value="inputMode === 'text' ? 'Switch to File Input' : 'Switch to Text Input'" @click="toggleInputMode">
@@ -35,11 +34,6 @@
     
     <div class="app-screen" v-else-if="displayScreen === 'Data Entry 2' && inputMode === 'text'">
       <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
-      
-      <div class="error-message">
-        <p v-if="error">{{ error }}</p>
-      </div>
-      
       
       <div class="data-input-container">
         <input class="data-input" v-model="inputString" @keyup.enter="processInput(2)"> <input type="button" class="data-submit" value="Submit Data" @click="processInput(2)">
@@ -66,6 +60,11 @@
       <ul>
         <li v-for="(value, key) in result">{{ key }}: {{ value }}</li>
       </ul>
+    </div>
+    
+    <div class="app-screen" v-else>
+      <!-- If result exists while there is an error, it is because a calculation failed -->
+      <p id="error-message"><span v-if="result">Calculation Failed.</span> Error: {{ error }}</p>
     </div>
     
     <div id="data-display">
