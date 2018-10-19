@@ -1,33 +1,86 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import CorrelationCalculator from './CorrelationCalculator.js'
+import RegressionCalculator from './RegressionCalculator.js'
+
+class ResultsItem extends Component {
+  render() {
+    return (<li>{this.props.result[0]}: {this.props.result[1]}</li>)
+  }
+}
+
+class Results extends Component {
+  render () {
+    let data = Object.entries(this.props.data)
+    return (
+      <ol>{data.map(res => <ResultsItem result={res} />)}</ol>
+    )
+  }
+}
 
 class App extends Component {
-  state = {
-    data: null,
-    calcType: null,
-    dataArrayOne: [],
-    dataArrayTwo: []
-  };
+  constructor (props) {
+    super(props)
+    this.state = {
+      data: null,
+      calcType: null,
+      dataArrayOne: [],
+      dataArrayTwo: [],
+      corrCalc: new CorrelationCalculator(),
+      regrCalc: new RegressionCalculator(),
+      result: {}
+    }
+    
+    console.log(this.state)
+    
+    this.processInput = this.processInput.bind(this)
+    this.performCalculation = this.performCalculation.bind(this)
+    this.resetCalculator = this.resetCalculator.bind(this)
+  }
   
-  processInput (num) {
-    console.log(num)
-    let inputString = document.getElementById(`data-input-${num}`).value
-    console.log(inputString)
-    // do the string manipulation and stuff and things
-    // don't forget to clear the data input box afterwards
+  processInput (arrayNum) {
+    let input = document.getElementById(`data-input-${arrayNum}`)
+    let inputString = input.value
+    input.value = ''
+    let splitString = inputString.split(',')
+    let outputArray = []
+    splitString.forEach(aString => {
+      let aNum = Number(aString.trim())
+      if (!isNaN(aNum)) {
+        outputArray.push(aNum)
+      } else {
+        console.log("Couldn't process input")
+      }
+    })
+    if (arrayNum === 1) {
+      this.setState({ dataArrayOne: outputArray })
+    } else if (arrayNum === 2) {
+      this.setState({ dataArrayTwo: outputArray })
+    }
   }
   
   resetCalculator () {
-    // reset all attributes to default values
-    console.log('this should reset the calculator eventually')
+    this.setState({
+      calcType: null,
+      dataArrayOne: [],
+      dataArrayTwo: [],
+      result: null
+    })
   }
   
   performCalculation (type) {
     // this one is going to need to talk to the express server to handle the calculations
-    console.log(`should perform calculation of type ${type}`)
     this.setState({
       calcType: type
+    }) // note to self, setState asynchronous in event handler, so couldn't rely on using state.calcType for these comparisons.
+    let newResult
+    if (type === 'correlation') {
+      newResult = this.state.corrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo)
+    } else if (type === 'regression') {
+      newResult = this.state.regrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo)
+    }
+    this.setState({
+      result: newResult
     })
   }
 
@@ -88,7 +141,12 @@ class App extends Component {
         <div className="app-screen">
           <h3>{this.state.calcType} calculated!</h3>
           
-          <p>display results here</p>
+          <Results data={this.state.result} />
+        </div>
+        
+        <div className="data-display">
+          <p>{this.state.dataArrayOne}</p>
+          <p>{this.state.dataArrayTwo}</p>
         </div>
       </div>
     );
