@@ -18,6 +18,22 @@ class Results extends Component {
   }
 }
 
+class DataItem extends Component {
+  render () {
+    return (<tr><td>{this.props.number}</td></tr>)
+  }
+}
+
+class DataTable extends Component {
+  render () {
+    return (<table>
+      {this.props.dataArray.map((num, index) => {
+        return <DataItem key={index} number={num} />
+      })}
+    </table>)
+  }
+}
+
 class App extends Component {
   constructor (props) {
     super(props)
@@ -28,14 +44,17 @@ class App extends Component {
       dataArrayTwo: [],
       corrCalc: new CorrelationCalculator(),
       regrCalc: new RegressionCalculator(),
-      result: {}
+      result: {},
+      displayScreen: 'Data Entry 1'
     }
+    this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results']
     
     console.log(this.state)
     
     this.processInput = this.processInput.bind(this)
     this.performCalculation = this.performCalculation.bind(this)
     this.resetCalculator = this.resetCalculator.bind(this)
+    this.changeScreen = this.changeScreen.bind(this)
   }
   
   processInput (arrayNum) {
@@ -64,8 +83,17 @@ class App extends Component {
       calcType: null,
       dataArrayOne: [],
       dataArrayTwo: [],
-      result: null
+      result: {},
+      displayScreen: 'Data Entry 1'
     })
+  }
+  
+  changeScreen (newScreen) {
+    if (this.validScreens.includes(newScreen)) {
+      this.setState({ displayScreen: newScreen })
+    } else {
+      console.warn('Change Screen Failed: Screen Was Not Valid')
+    }
   }
   
   performCalculation (type) {
@@ -102,6 +130,44 @@ class App extends Component {
   };
   
   render() {
+    const displayScreen = this.state.displayScreen
+    let appScreen
+    
+    if (displayScreen === 'Data Entry 1') {
+      appScreen = (<div className="app-screen">
+        <p>Please enter your first lot of data, separated by commas</p>
+
+        <div className="data-input-container">
+          <input className="data-input" id="data-input-1" />
+          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.processInput(1, e); this.changeScreen('Data Entry 2')}} />
+        </div>
+      </div>)
+    } else if (displayScreen === 'Data Entry 2') {
+      appScreen = (<div className="app-screen">
+        <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
+        
+        <div className="data-input-container">
+          <input className="data-input" id="data-input-2" />
+          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.processInput(2, e); this.changeScreen('Choose Calculation')}} />
+        </div>
+      </div>)
+    } else if (displayScreen === 'Choose Calculation') {
+      appScreen = (<div className="app-screen">
+        <p>Would you like to calculate the correlation or the regression of your data?</p>
+          
+        <div id="calcType-btns">
+          <input type="button" value="Correlation" onClick={(e) => { this.performCalculation('correlation'); this.changeScreen('Display Results')}} />
+          <input type="button" value="Regression" onClick={(e) => {this.performCalculation('regression'); this.changeScreen('Display Results')}} />
+        </div>
+      </div>)
+    } else if (displayScreen === 'Display Results') {
+      appScreen = (<div className="app-screen">
+        <h3>{this.state.calcType} calculated!</h3>
+        
+        <Results data={this.state.result} />
+        </div>)
+    }
+    
     return (
       <div className="App">
         <header className="App-header">
@@ -111,42 +177,11 @@ class App extends Component {
           <p className="App-intro">{this.state.data}</p>
         </header>
         
-        <div className="app-screen">
-          <p>Please enter your first lot of data, separated by commas</p>
-          
-          <div className="data-input-container">
-            <input className="data-input" id="data-input-1" />
-            <input type="button" className="data-submit" value="Submit Data" onClick={this.processInput.bind(this, 1)} />
-          </div>
-        </div>
-        
-        <div className="app-screen">
-          <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
-          
-          <div className="data-input-container">
-            <input className="data-input" id="data-input-2" />
-            <input type="button" className="data-submit" value="Submit Data" onClick={this.processInput.bind(this, 2)} />
-          </div>
-        </div>
-        
-        <div className="app-screen">
-          <p>Would you like to calculate the correlation or the regression of your data?</p>
-          
-          <div id="calcType-btns">
-            <input type="button" value="Correlation" onClick={this.performCalculation.bind(this, 'correlation')} />
-            <input type="button" value="Regression" onClick={this.performCalculation.bind(this, 'regression')} />
-          </div>
-        </div>
-        
-        <div className="app-screen">
-          <h3>{this.state.calcType} calculated!</h3>
-          
-          <Results data={this.state.result} />
-        </div>
+        {appScreen}
         
         <div className="data-display">
-          <p>{this.state.dataArrayOne}</p>
-          <p>{this.state.dataArrayTwo}</p>
+          <DataTable dataArray={this.state.dataArrayOne} />
+          <DataTable dataArray={this.state.dataArrayTwo} />
         </div>
       </div>
     );
