@@ -68,10 +68,8 @@ function main() {
         if (!this.error) {
           if (arrayNum === 1) {
             this.inputArrayOne = outputArray
-            this.changeScreen('Data Entry 2')
           } else if (arrayNum === 2) {
             this.inputArrayTwo = outputArray
-            this.changeScreen('Choose Calculation')
           }
         } else {
           this.changeScreen('Error')
