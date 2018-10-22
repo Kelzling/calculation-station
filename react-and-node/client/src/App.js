@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import './App.css'
 import CorrelationCalculator from './CorrelationCalculator.js'
 import RegressionCalculator from './RegressionCalculator.js'
 
@@ -27,11 +28,62 @@ class DataItem extends Component {
 class DataTable extends Component {
   render () {
     return (<table>
-      {this.props.dataArray.map((num, index) => {
-        return <DataItem key={index} number={num} />
-      })}
+      <tbody>
+        {this.props.dataArray.map((num, index) => {
+          return <DataItem key={index} number={num} />
+        })}
+      </tbody>
     </table>)
   }
+}
+
+class InputModeBtn extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      inputMode: 'text'
+    }
+    
+    this.toggleInputMode = this.toggleInputMode.bind(this)
+  }
+  
+  toggleInputMode () {
+    let newMode = (this.state.inputMode === 'text') ? 'file' : 'text'
+    this.setState({
+      inputMode: newMode
+    })
+    this.props.updateParent(newMode)
+  }
+  
+  render() {
+    return (<button onClick={(e) => { this.toggleInputMode() }}>Switch to {this.state.inputMode === 'text' ? 'file' : 'text'} input</button>)
+  }
+}
+
+class TextInput extends Component {
+  constructor (props) {
+    super(props)
+    
+    this.handleEnterKey = this.handleEnterKey.bind(this)
+  }
+  
+  handleEnterKey (e) {
+    if (e.key === 'Enter') {
+      this.props.handleEnter(e)
+    }
+  }
+  
+  componentDidMount () {
+    ReactDOM.findDOMNode(this).addEventListener("keydown", this.handleEnterKey)
+  }
+  
+  componentWillUnmount() {
+    ReactDOM.findDOMNode(this).removeEventListener("keydown", this.handleEnterKey)
+  }
+  
+  render () {
+    return (<input id={this.props.id} className="data-input" />)
+  } // onKeyDown={(e) => {this.handleEnterKey.bind(this, e)}} - for some reason this wouldn't attach the event handler correctly even though what I read suggested it should
 }
 
 class App extends Component {
@@ -45,7 +97,8 @@ class App extends Component {
       corrCalc: new CorrelationCalculator(),
       regrCalc: new RegressionCalculator(),
       result: {},
-      displayScreen: 'Data Entry 1'
+      displayScreen: 'Data Entry 1',
+      inputMode: 'text'
     }
     this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results']
     
@@ -55,13 +108,34 @@ class App extends Component {
     this.performCalculation = this.performCalculation.bind(this)
     this.resetCalculator = this.resetCalculator.bind(this)
     this.changeScreen = this.changeScreen.bind(this)
+    this.updateInputMode = this.updateInputMode.bind(this)
   }
   
-  processInput (arrayNum) {
+  updateInputMode (newMode) {
+    this.setState({
+      inputMode: newMode
+    })
+  }
+  
+  handleFileInput (arrayNum, e) {
+    let reader = new FileReader()
+    reader.onload = (e) => {
+      let inputString = e.target.result
+      this.processInput(inputString, arrayNum)
+    }
+    reader.readAsText(e.target.files[0])
+  }
+  
+  handleTextInput (arrayNum, e) {
     let input = document.getElementById(`data-input-${arrayNum}`)
     let inputString = input.value
     input.value = ''
-    let splitString = inputString.split(',')
+    this.processInput(inputString, arrayNum)
+  }
+  
+  processInput (inputString, arrayNum) {
+    let delimiter = (this.state.inputMode === 'text') ? ',' : '\r\n'
+    let splitString = inputString.split(delimiter)
     let outputArray = []
     splitString.forEach(aString => {
       let aNum = Number(aString.trim())
@@ -131,25 +205,38 @@ class App extends Component {
   
   render() {
     const displayScreen = this.state.displayScreen
+    const inputMode = this.state.inputMode
     let appScreen
     
-    if (displayScreen === 'Data Entry 1') {
+    if (displayScreen === 'Data Entry 1' && inputMode === 'text') {
       appScreen = (<div className="app-screen">
         <p>Please enter your first lot of data, separated by commas</p>
 
         <div className="data-input-container">
-          <input className="data-input" id="data-input-1" />
-          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.processInput(1, e); this.changeScreen('Data Entry 2')}} />
+          <TextInput id="data-input-1" handleEnter={(e) => { this.handleTextInput(1, e); this.changeScreen('Data Entry 2')} } />
+          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.handleTextInput(1, e); this.changeScreen('Data Entry 2')}} />
         </div>
       </div>)
-    } else if (displayScreen === 'Data Entry 2') {
+    } else if (displayScreen === 'Data Entry 1' && inputMode === 'file') {
+      appScreen = (<div className="app-screen">
+        <p>Please load your first data file. Each data item should be on a new line.</p>
+        
+        <input type="file" onChange={(e) => {this.handleFileInput(1, e); this.changeScreen('Data Entry 2')}} />
+      </div>)
+    } else if (displayScreen === 'Data Entry 2' && inputMode === 'text') {
       appScreen = (<div className="app-screen">
         <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
         
         <div className="data-input-container">
-          <input className="data-input" id="data-input-2" />
-          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.processInput(2, e); this.changeScreen('Choose Calculation')}} />
+          <TextInput id="data-input-2" handleEnter={(e) => { this.handleTextInput(2, e); this.changeScreen('Choose Calculation')} } />
+          <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.handleTextInput(2, e); this.changeScreen('Choose Calculation')}} />
         </div>
+      </div>)
+    } else if (displayScreen === 'Data Entry 2' && inputMode === 'file') {
+      appScreen = (<div className="app-screen">
+        <p>Please load your second data file. Please ensure both files have the same amount of numbers.</p>
+        
+        <input type="file" onChange={(e) => {this.handleFileInput(2, e); this.changeScreen('Choose Calculation')}} />
       </div>)
     } else if (displayScreen === 'Choose Calculation') {
       appScreen = (<div className="app-screen">
@@ -173,7 +260,10 @@ class App extends Component {
         <header className="App-header">
           <h1>Calculator</h1>
           <h2>Correlation + Regression</h2>
-          <input type="button" value="Reset Calculator" onClick={this.resetCalculator} />
+          <div id="top-buttons">
+            <input type="button" value="Reset Calculator" onClick={this.resetCalculator} />
+            <InputModeBtn updateParent={this.updateInputMode} />
+          </div>
           <p className="App-intro">{this.state.data}</p>
         </header>
         
