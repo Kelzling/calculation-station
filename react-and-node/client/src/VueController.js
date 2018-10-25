@@ -1,10 +1,12 @@
+import CorrelationCalculator from './CorrelationCalculator.js'
+import RegressionCalculator from './RegressionCalculator.js'
+
 var dataTable = {
   props: ['data'],
   template: '<table><tr v-for="(number, index) in data" v-bind:key="index"><td>{{ number }}</td></tr></table>'
 }
 
-function main() {
-  let vueController = new Vue({
+var vueController = new Vue({
     el: '#vue-app',
     data: {
       myCorrCalc: new CorrelationCalculator(),
@@ -100,4 +102,3 @@ function main() {
       'data-table': dataTable
     }
   })
-}
