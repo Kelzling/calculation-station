@@ -263,6 +263,7 @@ class App extends Component {
           <div id="top-buttons">
             <input type="button" value="Reset Calculator" onClick={this.resetCalculator} />
             <InputModeBtn updateParent={this.updateInputMode} />
+            <a href="/vue-index">Vue UI</a>
           </div>
           <p className="App-intro">{this.state.data}</p>
         </header>

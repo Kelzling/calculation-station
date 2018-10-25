@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <head>
   <title>Calculator</title>
-  <link rel="stylesheet" href="css\stylesheet.css"></link>
+  <link rel="stylesheet" href="../src/stylesheet.css"></link>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="src/VueController.js"></script>   
-  <script src="src/CorrelationCalculator.js"></script>
-  <script src="src/RegressionCalculator.js"></script>
-  <script>window.onload = main</script>
+  <script type="module" src="src/CorrelationCalculator.js"></script>
+  <script type="module" src="src/RegressionCalculator.js"></script>
 </head>
 <body>
   <div id="vue-app">
@@ -16,6 +14,7 @@
     <div id="top-buttons">
       <input type="button" value="Reset Calculator" @click="resetCalculator">
       <input type="button" v-if="/Data Entry [1,2]/.test(displayScreen)" v-bind:value="inputMode === 'text' ? 'Switch to File Input' : 'Switch to Text Input'" @click="toggleInputMode">
+      <a href="/">React UI</a>
     </div>
     
     <div class="app-screen" v-if="displayScreen === 'Data Entry 1' && inputMode === 'text'">
@@ -81,4 +80,6 @@
       
       <data-table v-if="inputArrayTwo" v-bind:data="inputArrayTwo"></data-table>
     </div>
+    
+    <script type="module" src="src/VueController.js"></script>
 </body>

@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../client/public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -26,10 +27,10 @@ app.use('/users', usersRouter);
 // console.log that your server is up and running
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-// create a GET route
-app.get('/express_backend', (req, res) => {
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
-});
+
+/* app.get('/react-index', (req, res) => {
+  res.redirect('localhost:3000')
+}) */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
