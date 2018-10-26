@@ -15,6 +15,8 @@ class RegressionCalculator extends CorrelationCalculator {
     } catch (error) {
       if (error.message === 'Not enough data points to run calculation') {
         this.error = error.message
+      } else {
+        throw error
       }
     }
   }

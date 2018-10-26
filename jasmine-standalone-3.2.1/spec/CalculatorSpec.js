@@ -1,8 +1,8 @@
 describe("Correlation Calculator", function() {
-  var calculator = new CorrelationCalculator()
-  var testData1 = [186, 699, 132, 272, 291, 331, 199, 1890, 788, 1601]
-  var testData2 = [15.0, 69.9, 6.5, 22.4, 28.4, 65.9, 19.4, 198.7, 38.8, 138.2]
-  var testData3 = [1, 2, 3, 4]
+  let calculator = new CorrelationCalculator()
+  let testData1 = [186, 699, 132, 272, 291, 331, 199, 1890, 788, 1601]
+  let testData2 = [15.0, 69.9, 6.5, 22.4, 28.4, 65.9, 19.4, 198.7, 38.8, 138.2]
+  let testData3 = [1, 2, 3, 4]
   
   describe("Initialising Calculator", function() {
     beforeAll(function() {
@@ -195,5 +195,131 @@ describe("Correlation Calculator", function() {
 })
 
 describe("Regression Calculator", function() {
-  // to be written
+  let calculator = new RegressionCalculator()
+  let testData1 = [130, 650, 99, 150, 128, 302, 95, 945, 368, 961]
+  let testData2 = [186, 699, 132, 272, 291, 331, 199, 1890, 788, 1601]
+  let testData3 = [1, 2, 3, 4]
+  let testData4 = [42, 19]
+  
+  describe("Initialising Calculator", function() {
+    it("initialiseCalculator method should exist", function() {
+      expect(calculator.initialiseCalculator).toBeDefined()
+    })
+    
+    it("should store an error message if not enough data is passed", function() {
+      calculator.initialiseCalculator(testData4, testData4)
+      expect(calculator.error).toBe('Not enough data points to run calculation')
+    })
+  })
+  
+  describe("validateData", function() {
+    it("should exist as a method", function() {
+      expect(calculator.validateData).toBeDefined()
+    })
+    
+    it("should throw an error if arrays contain less than 3 items", function() {
+      expect(function () { calculator.validateData(testData4, testData4) }).toThrowError()
+    })
+    
+    it("should generate a warning if arrays contain less than 5 items", function () {
+      calculator.validateData(testData3, testData3)
+      expect(calculator.warning).toBe('Not enough data for a statistically significant result')
+    })
+  })
+  
+  describe("performCalculation", function() {
+    calculator.initialiseCalculator(testData1, testData2)
+    calculator.calculateDataComponents()
+    let result = calculator.performCalculation()
+    
+    it("should exist as a method", function() {
+      expect(calculator.performCalculation).toBeDefined()
+    })
+    
+    it("should return an object", function() {
+      expect(result === Object(result)).toBeTruthy()
+    })
+    
+    it("result object should have a beta0 value", function() {
+      expect(result.beta0).toBeDefined()
+    })
+    
+    it("beta0 value should be -22.55", function() {
+      expect(result.beta0).toBeCloseTo(-22.55, 2)
+    })
+    
+    it("result object should have a beta1 value", function() {
+      expect(result.beta1).toBeDefined()
+    })
+    
+    it("beta1 value should be 1.7279", function() {
+      expect(result.beta1).toBeCloseTo(1.7279, 4)
+    })
+  })
+  
+  describe("calculateYK", function() {
+    calculator.initialiseCalculator(testData1, testData2)
+    calculator.calculateDataComponents()
+    let result = calculator.performCalculation()
+    
+    it("should exist as a method", function() {
+      expect(calculator.calculateYK).toBeDefined()
+    })
+    
+    it("should return 50.0206 for an xK value of 42", function() {
+      let yK = calculator.calculateYK(42, result)
+      expect(yK).toBeCloseTo(50.0206, 4)
+    })
+    
+/*     it("should return 644 for an xK value of 389", function() {
+      let yK = calculator.calculateYK(389, result)
+      expect(yK).toBe(644)
+    }) */
+  })
+  
+  describe("runCalculator", function() {
+    let output = calculator.runCalculator(testData1, testData2, 42)
+    let warningOutput = calculator.runCalculator(testData3, testData3)
+    
+    it("should exist as a method", function() {
+      expect(calculator.runCalculator).toBeDefined()
+    })
+    
+    it("should return an object if run successfully", function() {
+      expect(output === Object(output)).toBeTruthy()
+    })
+    
+    it("output object should have a beta0 value", function() {
+      expect(output.beta0).toBeDefined()
+    })
+    
+    it("beta0 value should be -22.55", function() {
+      expect(output.beta0).toBeCloseTo(-22.55, 2)
+    })
+    
+    it("output object should have a beta1 value", function() {
+      expect(output.beta1).toBeDefined()
+    })
+    
+    it("beta1 value should be 1.7279", function() {
+      expect(output.beta1).toBeCloseTo(1.7279, 4)
+    })
+    
+    it("output object should have a yK value if method was passed an xK value", function() {
+      expect(output.yK).toBeDefined()
+    })
+    
+    it("yK value should be 50.0206", function() {
+      expect(output.yK).toBeCloseTo(50.0206, 4)
+    })
+    
+    it("output object should not have a yK value if no xK value was passed", function() {
+      let output = calculator.runCalculator(testData1, testData2)
+      expect(output.xK).toBeFalsy()
+    })
+    
+    it("output object should have a warning value if the data had between 3 and 5 items", function() {
+      expect(warningOutput.warning).toBe('Not enough data for a statistically significant result')
+    })
+  })
 })
