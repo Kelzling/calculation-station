@@ -19,6 +19,7 @@ router.get('/vue-index', (req, res) => {
   res.
 })
  */
+
 router.get('/src/stylesheet.css', (req, res) => {
   res.sendFile('client/src/stylesheet.css', options)
 })
