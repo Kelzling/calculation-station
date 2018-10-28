@@ -19,24 +19,28 @@ var vueController = new Vue({
       delimiter: ',',
       calcType: '',
       displayScreen: 'Data Entry 1',
-      validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results', 'Error'],
+      validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results'],
       error: ''
     },
     methods: {
       resetCalculator: function () {
+        this.error = ''
         this.inputString = ''
         this.inputArrayOne = []
         this.inputArrayTwo = []
         this.result = null
         this.calcType = ''
         this.changeScreen('Data Entry 1')
-        this.error = ''
       },
       changeScreen: function (newScreen) {
-      if (this.validScreens.includes(newScreen)) {
-          this.displayScreen = newScreen
+        if (!this.error) {
+          if (this.validScreens.includes(newScreen)) {
+            this.displayScreen = newScreen
+          } else {
+            console.warn('Change Screen Failed: Screen Was Not Valid')
+          }
         } else {
-          console.warn('Change Screen Failed: Screen Was Not Valid')
+          this.displayScreen = "Error"
         }
       },
       toggleInputMode: function () {
@@ -67,14 +71,10 @@ var vueController = new Vue({
           }
         }
         this.inputString = ''
-        if (!this.error) {
-          if (arrayNum === 1) {
-            this.inputArrayOne = outputArray
-          } else if (arrayNum === 2) {
-            this.inputArrayTwo = outputArray
-          }
-        } else {
-          this.changeScreen('Error')
+        if (arrayNum === 1) {
+          this.inputArrayOne = outputArray
+        } else if (arrayNum === 2) {
+          this.inputArrayTwo = outputArray
         }
       },
       setCalcType: function(type) {
@@ -89,12 +89,9 @@ var vueController = new Vue({
         } else if (this.calcType === 'regression') {
           this.result = this.myRegrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo, this.xK)
         }
-        if (typeof this.result === 'object' && this.result) { // typeof null also evaluates to object so also checking if result is true to make sure the object actually contains something
-          this.changeScreen('Display Results')
-        } else if (typeof this.result === 'string') {
+        if (typeof this.result === 'string') {
           // if it's a string, there's an error
           this.error = this.result
-          this.changeScreen('Error')
         } // should probably add something to handle whether something else is returned e.g. null
       }
     },
