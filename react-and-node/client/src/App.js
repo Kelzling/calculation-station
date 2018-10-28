@@ -100,7 +100,7 @@ class App extends Component {
       displayScreen: 'Data Entry 1',
       inputMode: 'text'
     }
-    this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results']
+    this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Perform Calculation', 'Display Results']
     
     console.log(this.state)
     
@@ -115,6 +115,22 @@ class App extends Component {
     this.setState({
       inputMode: newMode
     })
+  }
+  
+  setCalcType (type) {
+    this.setState({
+      calcType: type
+    })
+  }
+  
+  setXK (e) {
+    let input = document.getElementById('xK-input')
+    let newXK = Number(input.value)
+    console.log(newXK, '', input.value)
+    this.setState({
+      xK: newXK
+    })
+    input.value = ''
   }
   
   handleFileInput (arrayNum, e) {
@@ -170,16 +186,12 @@ class App extends Component {
     }
   }
   
-  performCalculation (type) {
-    // this one is going to need to talk to the express server to handle the calculations
-    this.setState({
-      calcType: type
-    }) // note to self, setState asynchronous in event handler, so couldn't rely on using state.calcType for these comparisons.
+  performCalculation () {
     let newResult
-    if (type === 'correlation') {
+    if (this.state.calcType === 'correlation') {
       newResult = this.state.corrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo)
-    } else if (type === 'regression') {
-      newResult = this.state.regrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo)
+    } else if (this.state.calcType === 'regression') {
+      newResult = this.state.regrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo, this.state.xK)
     }
     this.setState({
       result: newResult
@@ -207,6 +219,17 @@ class App extends Component {
     const displayScreen = this.state.displayScreen
     const inputMode = this.state.inputMode
     let appScreen
+    let inputYK
+    
+    if (this.state.calcType === 'regression') {
+      inputYK = (<div>
+        <p>{this.state.xK ? 'xK set!' : 'Please enter an xK'}</p>
+        <div className="data-input-container">
+          <TextInput id="xK-input" handleEnter={ (e) => {this.setXK(e)} } />
+          <input type="button" className="data-submit" value="Set xK" onClick={(e) => { this.setXK(e) }} />
+        </div>
+      </div>)
+    }
     
     if (displayScreen === 'Data Entry 1' && inputMode === 'text') {
       appScreen = (<div className="app-screen">
@@ -243,9 +266,15 @@ class App extends Component {
         <p>Would you like to calculate the correlation or the regression of your data?</p>
           
         <div id="calcType-btns">
-          <input type="button" value="Correlation" onClick={(e) => { this.performCalculation('correlation'); this.changeScreen('Display Results')}} />
-          <input type="button" value="Regression" onClick={(e) => {this.performCalculation('regression'); this.changeScreen('Display Results')}} />
+          <input type="button" value="Correlation" onClick={(e) => { this.setCalcType('correlation'); this.changeScreen('Perform Calculation')}} />
+          <input type="button" value="Regression" onClick={(e) => {this.setCalcType('regression'); this.changeScreen('Perform Calculation')}} />
         </div>
+      </div>)
+    } else if (displayScreen === 'Perform Calculation') {
+      appScreen = (<div className="app-screen">
+        {inputYK}
+        
+        <input type="button" value="Perform Calculation" onClick={() => {this.performCalculation(); this.changeScreen('Display Results')}}/>
       </div>)
     } else if (displayScreen === 'Display Results') {
       appScreen = (<div className="app-screen">
