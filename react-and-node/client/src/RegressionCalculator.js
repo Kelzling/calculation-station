@@ -1,6 +1,28 @@
 import CorrelationCalculator from './CorrelationCalculator.js'
 
 class RegressionCalculator extends CorrelationCalculator {
+  validateData (xArray, yArray) {
+    super.validateData(xArray, yArray)
+    if (xArray.length < 3) {
+      throw new Error('Not enough data points to run calculation')
+    } else if (xArray.length < 5) {
+      this.warning = 'Not enough data for a statistically significant result'
+    }
+  }
+  
+  initialiseCalculator (newXArray, newYArray) {
+    this.warning = ''
+    try {
+      super.initialiseCalculator(newXArray, newYArray)
+    } catch (error) {
+      if (error.message === 'Not enough data points to run calculation') {
+        this.error = error.message
+      } else {
+        throw error
+      }
+    }
+  }
+  
   performCalculation () {
     // calculate top line of the equation
     let xAvg = this.xSum / this.itemCount
@@ -16,6 +38,22 @@ class RegressionCalculator extends CorrelationCalculator {
     result.beta1 = topLine / bottomLine
     result.beta0 = yAvg - result.beta1 * xAvg
     return result
+  }
+  
+  calculateYK (xK, betaValues) {
+    return betaValues.beta0 + betaValues.beta1 * xK
+  }
+  
+  runCalculator (newXArray, newYArray, newXK) {
+    let output = super.runCalculator(newXArray, newYArray)
+    if (newXK) {
+      output.yK = this.calculateYK(newXK, output)
+    }
+    if (this.warning) {
+      output.warning = this.warning
+    }
+    console.log(output)
+    return output
   }
 }
 
