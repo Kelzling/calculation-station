@@ -98,9 +98,10 @@ class App extends Component {
       regrCalc: new RegressionCalculator(),
       result: {},
       displayScreen: 'Data Entry 1',
-      inputMode: 'text'
+      inputMode: 'text',
+      error: ''
     }
-    this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Perform Calculation', 'Display Results']
+    this.validScreens = ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Perform Calculation', 'Display Results', 'Error']
     
     console.log(this.state)
     
@@ -153,18 +154,25 @@ class App extends Component {
     let delimiter = (this.state.inputMode === 'text') ? ',' : '\r\n'
     let splitString = inputString.split(delimiter)
     let outputArray = []
+    let error = ''
     splitString.forEach(aString => {
       let aNum = Number(aString.trim())
       if (!isNaN(aNum)) {
         outputArray.push(aNum)
       } else {
-        console.log("Couldn't process input")
+        error = "Couldn't process input"
       }
     })
-    if (arrayNum === 1) {
-      this.setState({ dataArrayOne: outputArray })
-    } else if (arrayNum === 2) {
-      this.setState({ dataArrayTwo: outputArray })
+    if (!error) {
+      if (arrayNum === 1) {
+        this.setState({ dataArrayOne: outputArray })
+      } else if (arrayNum === 2) {
+        this.setState({ dataArrayTwo: outputArray })
+      }
+    } else {
+      this.setState({
+        error: error
+      })
     }
   }
   
@@ -174,15 +182,24 @@ class App extends Component {
       dataArrayOne: [],
       dataArrayTwo: [],
       result: {},
-      displayScreen: 'Data Entry 1'
+      displayScreen: 'Data Entry 1',
+      error: ''
     })
   }
   
   changeScreen (newScreen) {
-    if (this.validScreens.includes(newScreen)) {
-      this.setState({ displayScreen: newScreen })
+    if (!this.state.error) {
+      if (this.validScreens.includes(newScreen)) {
+        this.setState({ 
+          displayScreen: newScreen
+        })
+      } else {
+        console.warn('Change Screen Failed: Screen Was Not Valid')
+      }
     } else {
-      console.warn('Change Screen Failed: Screen Was Not Valid')
+      this.setState({
+        displayScreen: 'Error'
+      })
     }
   }
   
@@ -193,9 +210,17 @@ class App extends Component {
     } else if (this.state.calcType === 'regression') {
       newResult = this.state.regrCalc.runCalculator(this.state.dataArrayOne, this.state.dataArrayTwo, this.state.xK)
     }
-    this.setState({
-      result: newResult
-    })
+    if (!typeof newResult === 'string') {
+      this.setState({
+        result: newResult
+      })
+      this.changeScreen('Display Results')
+    } else {
+      this.setState({
+        error: newResult
+      })
+      this.changeScreen('Error')
+    }
   }
 
   componentDidMount() {
@@ -250,6 +275,8 @@ class App extends Component {
       appScreen = (<div className="app-screen">
         <p>Please enter your second lot of data, which must be the same length as the first, separated by commas</p>
         
+        <p id="error-message">{this.state.error ? `${this.state.error}, please reset calculator.` : ''}</p>
+        
         <div className="data-input-container">
           <TextInput id="data-input-2" handleEnter={(e) => { this.handleTextInput(2, e); this.changeScreen('Choose Calculation')} } />
           <input type="button" className="data-submit" value="Submit Data" onClick={(e) => {this.handleTextInput(2, e); this.changeScreen('Choose Calculation')}} />
@@ -274,7 +301,7 @@ class App extends Component {
       appScreen = (<div className="app-screen">
         {inputYK}
         
-        <input type="button" value="Perform Calculation" onClick={() => {this.performCalculation(); this.changeScreen('Display Results')}}/>
+        <input type="button" value="Perform Calculation" onClick={() => {this.performCalculation()}}/>
       </div>)
     } else if (displayScreen === 'Display Results') {
       appScreen = (<div className="app-screen">
@@ -282,6 +309,10 @@ class App extends Component {
         
         <Results data={this.state.result} />
         </div>)
+    } else if (displayScreen === 'Error') {
+      appScreen = (<div className="app-screen">
+        <p id="error-message">{this.state.result ? 'Calculation failed.' : ''} Error: {this.state.error}. Please reset calculator.</p>
+      </div>)
     }
     
     return (
