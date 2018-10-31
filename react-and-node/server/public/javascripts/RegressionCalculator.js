@@ -1,3 +1,5 @@
+const CorrelationCalculator = require('./CorrelationCalculator.js')
+
 class RegressionCalculator extends CorrelationCalculator {
   validateData (xArray, yArray) {
     super.validateData(xArray, yArray)
@@ -52,3 +54,5 @@ class RegressionCalculator extends CorrelationCalculator {
     return output
   }
 }
+
+module.exports = RegressionCalculator

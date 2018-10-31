@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <head>
   <title>Calculator</title>
-  <link rel="stylesheet" href="css\stylesheet.css"></link>
+  <link rel="stylesheet" href="../src/stylesheet.css"></link>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="src/VueController.js"></script>   
-  <script src="src/CorrelationCalculator.js"></script>
-  <script src="src/RegressionCalculator.js"></script>
-  <script>window.onload = main</script>
+  <script type="module" src="src/CorrelationCalculator.js"></script>
+  <script type="module" src="src/RegressionCalculator.js"></script>
 </head>
 <body>
   <div id="vue-app">
@@ -16,6 +14,7 @@
     <div id="top-buttons">
       <input type="button" value="Reset Calculator" @click="resetCalculator">
       <input type="button" v-if="/Data Entry [1,2]/.test(displayScreen)" v-bind:value="inputMode === 'text' ? 'Switch to File Input' : 'Switch to Text Input'" @click="toggleInputMode">
+      <a href="/">React UI</a>
     </div>
     
     <div class="app-screen" v-if="displayScreen === 'Data Entry 1' && inputMode === 'text'">
@@ -50,15 +49,15 @@
     <div class="app-screen" v-else-if="displayScreen === 'Choose Calculation'">
       <p>Would you like to calculate the correlation or the regression of your data?</p>
       <div id="calcType-btns">
-        <input type="button" value="Correlation" @click="setCalcType('correlation'); performCalculation()">
+        <input type="button" value="Correlation" @click="setCalcType('correlation'); performCalculation(); changeScreen('Display Results')">
         <input type="button" value="Regression" @click="setCalcType('regression')">
       </div>
       
       <div  v-if="calcType === 'regression'">
         <p>Please enter an xK value for the calculation</p>
         <div class="data-input-container">
-          <input v-model="inputString" @keyup.enter="performCalculation()">
-          <input type="button" class="data-submit" value="Start Calculation" @click="setXK(); performCalculation()">
+          <input v-model="inputString" @keyup.enter="setXK(); performCalculation(); changeScreen('Display Results')">
+          <input type="button" class="data-submit" value="Start Calculation" @click="setXK(); performCalculation(); changeScreen('Display Results')">
         </div>
       </div>
     </div>
@@ -81,4 +80,7 @@
       
       <data-table v-if="inputArrayTwo" v-bind:data="inputArrayTwo"></data-table>
     </div>
+    
+    <script type="module" src="src/VueController.js"></script>
+  </div>
 </body>
