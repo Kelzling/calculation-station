@@ -14,12 +14,6 @@ router.get('/vue-index', (req, res) => {
   res.sendFile('client/public/VueIndex.html', options)
 })
 
-/* router.get('/react-index', (req, res) => {
-  req.get({url: 'localhost:3000/', headers: req.headers})
-  res.
-})
- */
-
 router.get('/src/stylesheet.css', (req, res) => {
   res.sendFile('client/src/stylesheet.css', options)
 })
