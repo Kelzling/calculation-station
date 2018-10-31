@@ -7,7 +7,7 @@ var dataTable = {
 }
 
 var vueController = new Vue({
-    el: '#vue-app',
+    el: '#root',
     data: {
       myCorrCalc: new CorrelationCalculator(),
       myRegrCalc: new RegressionCalculator(),
@@ -20,7 +20,8 @@ var vueController = new Vue({
       calcType: '',
       displayScreen: 'Data Entry 1',
       validScreens: ['Data Entry 1', 'Data Entry 2', 'Choose Calculation', 'Display Results'],
-      error: ''
+      error: '',
+      displayUI: 'vue'
     },
     methods: {
       resetCalculator: function () {
@@ -46,6 +47,9 @@ var vueController = new Vue({
       toggleInputMode: function () {
         this.inputMode = (this.inputMode === 'text') ? 'file' : 'text'
         this.delimiter = (this.inputMode === 'text') ? ',' : '\r\n'
+      },
+      toggleUI: function () {
+        this.displayUI = (this.displayUI === 'vue') ? 'react' : 'vue'
       },
       handleFileInput: function(e, arrayNum) {
         let reader = new FileReader()
