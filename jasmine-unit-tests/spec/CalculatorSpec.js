@@ -65,27 +65,20 @@ describe("Correlation Calculator", function() {
       expect(calculator.sumArrayElements(testData3)).toBe(expectedResult)
     })
   })
-  
-  describe("squareNumber", function() {
+
+  describe("multiplyArrayElements", function() {
     it("should exist as a method", function() {
-      expect(calculator.squareNumber).toBeDefined()
+      expect(calculator.multiplyArrayElements).toBeDefined()
     })
     
-    it("should return the square of a number", function() {
-      let num = 4
-      let expectedResult = 16
-      expect(calculator.squareNumber(num)).toBe(expectedResult)
-    })
-  })
-  
-  describe("squareArrayElements", function() {
-    it("should exist as a method", function() {
-      expect(calculator.squareArrayElements).toBeDefined()
+    it('should multiply the corresponding individual elements of two arrays together', function() {
+      let expectedResult = [2790, 48860.100000000006, 858, 6092.799999999999, 8264.4, 21812.9, 3860.6, 375543, 30574.399999999998, 221258.19999999998]
+      expect(calculator.multiplyArrayElements(testData1, testData2)).toEqual(expectedResult)
     })
     
-    it("should generate an array of squared numbers when passed an array", function() {
+    it("should generate an array of squared numbers when passed the same array twice", function() {
       let expectedResult = [1, 4, 9, 16]
-      expect(calculator.squareArrayElements(testData3)).toEqual(expectedResult)
+      expect(calculator.multiplyArrayElements(testData3, testData3)).toEqual(expectedResult)
     })
   })
   
@@ -187,9 +180,9 @@ describe("Correlation Calculator", function() {
       expect(output.coefficientSquared).toBeCloseTo(0.9107, 4)
     })
     
-    it("should return a string if the arrays are not the same length", function() { 
+    it("result should have a .error property if the arrays are not the same length", function() { 
       let errorResult = calculator.runCalculator(testData1, testData3)
-      expect(typeof errorResult).toBe('string')
+      expect(errorResult.error).toBeDefined()
     })
   })
 })

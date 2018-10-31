@@ -31,7 +31,7 @@ class RegressionCalculator extends CorrelationCalculator {
     let topLine = this.xySum - this.itemCount * xAvg * yAvg
     
     // calculate bottom line of the equation
-    let bottomLine = this.xSqSum - this.itemCount * this.squareNumber(xAvg)
+    let bottomLine = this.xSqSum - this.itemCount * Math.pow(xAvg, 2)
     
     // generate and output results
     let result = {}
