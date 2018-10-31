@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Correlation</title>
+  <script src="src/CorrelationCalculator.js"></script>
+  <script src="src/RegressionCalculator.js"></script>
+</head>
+<body>
+  <p>Stuff Happens In The Console</p>
+  <script>
+    var ccalc = new CorrelationCalculator
+    var rcalc = new RegressionCalculator
+    
+    let testData1 = [186, 699, 132, 272, 291, 331, 199, 1890, 788, 1601]
+    let testData2 = [15.0, 69.9, 6.5, 22.4, 28.4, 65.9, 19.4, 198.7, 38.8, 138.2]
+    console.log(ccalc.runCalculator(testData1, testData2))
+    
+    let testData3 = [130, 650, 99, 150, 128, 302, 95, 945, 368, 961]
+    let testData4 = [186, 699, 132, 272, 291, 331, 199, 1890, 788, 1601]
+    console.log(rcalc.runCalculator(testData3, testData4))
+    console.log(rcalc.runCalculator(testData3, testData4, 42))
+  </script>
+</body>
+</html>
