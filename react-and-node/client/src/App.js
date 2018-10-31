@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import './App.css'
-import CorrelationCalculator from './CorrelationCalculator.js'
-import RegressionCalculator from './RegressionCalculator.js'
 
 class ResultsItem extends Component {
   render() {
@@ -98,7 +96,6 @@ class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      data: null,
       calcType: null,
       dataArrayOne: [],
       dataArrayTwo: [],
@@ -403,7 +400,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1>Calculator</h1>
+          <h1>Calculator - React</h1>
           <h2>Correlation + Regression</h2>
           <div id="top-buttons">
             <input type="button" value="Reset Calculator" onClick={this.resetCalculator} />
