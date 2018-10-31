@@ -75,7 +75,7 @@ class CorrelationCalculator {
     let output = null
     this.initialiseCalculator(newXArray, newYArray)
     if (this.error) {
-      output = this.error
+      output = { error: this.error }
     } else {
       this.calculateDataComponents()
       output = this.performCalculation()

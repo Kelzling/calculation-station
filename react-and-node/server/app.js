@@ -53,12 +53,16 @@ app.get('/calc-corr', (req, res) => {
   // sort out data
   let dataArray = getData(req)
   let arrayX = parseInput(dataArray[0])
+  console.log(arrayX)
   let arrayY = parseInput(dataArray[1])
+  console.log(arrayY)
   
   // run calculation 
   let result = corrCalc.runCalculator(arrayX, arrayY)
-  
-  // do something to turn the result into JSON data and return it to the requester
+  // turn the result into JSON data
+  let output = JSON.stringify(result)
+  console.log(output)
+  res.send(output)
 })
 
 app.get('/calc-regr', (req, res) => {
