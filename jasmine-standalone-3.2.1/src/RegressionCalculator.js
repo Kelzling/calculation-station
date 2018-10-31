@@ -1,5 +1,3 @@
-import CorrelationCalculator from './CorrelationCalculator.js'
-
 class RegressionCalculator extends CorrelationCalculator {
   validateData (xArray, yArray) {
     super.validateData(xArray, yArray)
@@ -56,5 +54,3 @@ class RegressionCalculator extends CorrelationCalculator {
     return output
   }
 }
-
-export default RegressionCalculator

@@ -1,4 +1,5 @@
-import CorrelationCalculator from './CorrelationCalculator.js'
+const CorrelationCalculator = require('./CorrelationCalculator.js')
+// import CorrelationCalculator from './CorrelationCalculator.js'
 
 class RegressionCalculator extends CorrelationCalculator {
   validateData (xArray, yArray) {
@@ -57,4 +58,5 @@ class RegressionCalculator extends CorrelationCalculator {
   }
 }
 
-export default RegressionCalculator
+// export default RegressionCalculator
+module.exports = RegressionCalculator
