@@ -2,7 +2,7 @@ const { readFileSync } = require('fs')
 
 function parseData (file) {
   let inputString = readFileSync(file, 'utf8', (error, text) => {
-    if (error) {throw error}
+    if (error) { throw error }
     return text
   })
   let splitString = inputString.split('\r\n')

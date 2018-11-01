@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
+var express = require('express')
+var router = express.Router()
+var path = require('path')
 var options = {
   root: path.join(__dirname, '../..')
 }
@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
  */
 
 // serving up static files for the Vue UI
- 
+
 /* Depreciated due to creation of Single Page App containing both UIs
 router.get('/vue-index', (req, res) => {
   res.sendFile('client/public/VueIndex.html', options)
@@ -35,7 +35,7 @@ router.get('/src/RegressionCalculator.js', (req, res) => {
 })
 
 router.get('/express_backend', (req, res) => {
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED' });
-});
+  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED' })
+})
 
-module.exports = router;
+module.exports = router

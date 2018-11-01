@@ -2,7 +2,7 @@ class CorrelationCalculator {
   constructor () {
     this.initialiseCalculator()
   }
-  
+
   initialiseCalculator () {
     // (re)initialise all the class attributes
     this.error = ''
@@ -17,14 +17,14 @@ class CorrelationCalculator {
     this.ySqSum = 0
     this.result = {}
   }
-  
+
   validateData (xArray, yArray) {
     // arrays must be the same length for the calculation to work correctly
     if (xArray.length !== yArray.length) {
       throw new Error('Array lengths did not match')
     }
   }
-  
+
   addData (newXArray, newYArray) {
     try {
       this.validateData(newXArray, newYArray)
@@ -39,24 +39,24 @@ class CorrelationCalculator {
     this.yArray = newYArray
     this.itemCount = this.xArray.length
   }
-  
-  sumArrayElements(inputArray) {
+
+  sumArrayElements (inputArray) {
     // generates the total of all elements in an array
     let result = inputArray.reduce((total, number) => {
       return total + number
     })
     return result
   }
-  
-  multiplyArrayElements(arrayOne, arrayTwo) {
+
+  multiplyArrayElements (arrayOne, arrayTwo) {
     // generates a new array where each element has been squared
     let outputArray = arrayOne.map((number, index) => {
       return number * arrayTwo[index]
     })
     return outputArray
   }
-  
-  calculateDataComponents() {
+
+  calculateDataComponents () {
     this.xyArray = this.multiplyArrayElements(this.xArray, this.yArray)
     this.xSum = this.sumArrayElements(this.xArray)
     this.ySum = this.sumArrayElements(this.yArray)
@@ -64,23 +64,23 @@ class CorrelationCalculator {
     this.xSqSum = this.sumArrayElements(this.multiplyArrayElements(this.xArray, this.xArray))
     this.ySqSum = this.sumArrayElements(this.multiplyArrayElements(this.yArray, this.yArray))
   }
-  
-  performCalculation() {
+
+  performCalculation () {
     // top line of the equation
     let topLine = (this.itemCount * this.xySum) - (this.xSum * this.ySum)
-    
+
     // bottom line of the calculation
     let bottomLeft = this.itemCount * this.xSqSum - Math.pow(this.xSum, 2)
     let bottomRight = this.itemCount * this.ySqSum - Math.pow(this.ySum, 2)
     let bottomLine = Math.sqrt(bottomLeft * bottomRight)
-    
+
     // generate and output results
     this.result.coefficient = topLine / bottomLine
     this.result.coefficientSquared = Math.pow(this.result.coefficient, 2)
     return this.result
   }
-  
-  runCalculator(newXArray, newYArray) {
+
+  runCalculator (newXArray, newYArray) {
     let output = null
     if (this.result) {
       this.initialiseCalculator()
