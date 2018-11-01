@@ -223,6 +223,20 @@ describe("Regression Calculator", function() {
   let testData3 = [1, 2, 3, 4]
   let testData4 = [42, 19]
   
+  beforeEach(function() {
+    calculator.initialiseCalculator()
+  })
+  
+  describe("initialiseCalculator", function() {
+    it("should exist as a method", function() {
+      expect(calculator.initialiseCalculator).toBeDefined()
+    })
+    
+    it("should initialise the warning attribute to an empty string", function () {
+      expect(calculator.warning).toEqual('')
+    })
+  })
+  
   describe("addData", function() {
     it("method should exist", function() {
       expect(calculator.addData).toBeDefined()
@@ -250,7 +264,6 @@ describe("Regression Calculator", function() {
   })
   
   describe("performCalculation", function() {
-    calculator.initialiseCalculator()
     calculator.addData(testData1, testData2)
     calculator.calculateDataComponents()
     let result = calculator.performCalculation()
@@ -281,7 +294,6 @@ describe("Regression Calculator", function() {
   })
   
   describe("calculateYK", function() {
-    calculator.initialiseCalculator()
     calculator.addData(testData1, testData2)
     calculator.calculateDataComponents()
     let result = calculator.performCalculation()

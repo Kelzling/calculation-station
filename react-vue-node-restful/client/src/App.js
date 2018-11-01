@@ -141,7 +141,7 @@ class App extends Component {
     // gets the xK value from an input box, parses it to a number, and stores it. Passed to a TextInput component as a callback function
     let input = document.getElementById('xK-input')
     let newXK = Number(input.value)
-    console.log(newXK, '', input.value)
+    console.log(newXK, ', ', input.value)
     this.setState({
       xK: newXK
     })
@@ -232,6 +232,7 @@ class App extends Component {
       if (i !== array.length - 1) {
         output += `${num},`
       } else {
+        // had to handle the case of the final item in the array, as a trailing comma on the string lead to an extra '0' being added to the data, throwing off the calculation
         output += `${num}`
       }
     })
@@ -254,11 +255,13 @@ class App extends Component {
   updateDisplay (response) {
     // updates the state and display screen based upon the return from the server
     if (!response.error) {
+      // as long as there is no error, store the data and update the screen
       this.setState({
         result: response
       })
       this.changeScreen('Display Results')
     } else {
+      // otherwise, error handling mode!
       this.setState({
         error: response.error
       })
@@ -267,14 +270,19 @@ class App extends Component {
   }
 
   performCalculation () {
+    // construct the url string required to send the request to the RESTful server
     let urlString
+    // set the calculation type
     if (this.state.calcType === 'correlation') {
-      urlString = `/calc-corr?${this.createArrayString(this.state.dataArrayOne)}&${this.createArrayString(this.state.dataArrayTwo)}`
+      urlString = `/calc-corr`
     } else if (this.state.calcType === 'regression') {
-      urlString = `/calc-regr?${this.createArrayString(this.state.dataArrayOne)}&${this.createArrayString(this.state.dataArrayTwo)}`
-      if (this.state.xK) {
+      urlString = `/calc-regr`
+    }
+    // add the main data arrays
+    urlString += `?${this.createArrayString(this.state.dataArrayOne)}&${this.createArrayString(this.state.dataArrayTwo)}`
+    // add the xK if it exists
+    if (this.state.xK) {
         urlString += `&${this.state.xK}`
-      }
     }
     console.log(urlString)
     // talking to the server is an async function, so need to use .then to control the response to the resolving of the promise.
@@ -320,7 +328,7 @@ class App extends Component {
       </div>)
     }
 
-    // sets the appScreen variable to different JSX depending on what the displayScreen and inputMode are. Used to conditionally render each screen of the app. I didn't feel like any of these were quite similar enough to create components for them all.
+    // sets the appScreen variable to different JSX depending on what the displayScreen and inputMode are. Used to conditionally render each screen of the app. I didn't feel like any of these were quite similar enough to create components for them.
     if (displayScreen === 'Data Entry 1' && inputMode === 'text') {
       appScreen = (<div className='app-screen'>
         <p>Please enter your first lot of data, separated by commas</p>
