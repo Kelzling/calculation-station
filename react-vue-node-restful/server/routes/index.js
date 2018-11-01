@@ -16,11 +16,11 @@ router.get('/', function(req, res, next) {
 /* Depreciated due to creation of Single Page App containing both UIs
 router.get('/vue-index', (req, res) => {
   res.sendFile('client/public/VueIndex.html', options)
-}) */
+}) 
 
 router.get('/src/stylesheet.css', (req, res) => {
   res.sendFile('client/src/stylesheet.css', options)
-})
+}) */
 
 router.get('/src/VueController.js', (req, res) => {
   res.sendFile('client/src/VueController.js', options)

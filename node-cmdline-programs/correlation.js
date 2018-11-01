@@ -18,6 +18,7 @@ for (let key in output) {
 
 // write data to file
 writeFile(process.argv[4], outputString, error => {
+  // inform the user if there was an error, otherwise let them know the operation completed successfully
   if (error) { console.log('failed to write to file', error) }
   console.log('output written to file')
 })
