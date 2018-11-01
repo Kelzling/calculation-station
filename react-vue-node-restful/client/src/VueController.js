@@ -27,6 +27,7 @@ var vueController = new Vue({ // eslint-disable-line no-unused-vars
   },
   methods: {
     resetCalculator: function () {
+      // reset all variables
       this.error = ''
       this.inputString = ''
       this.inputArrayOne = []
@@ -36,6 +37,7 @@ var vueController = new Vue({ // eslint-disable-line no-unused-vars
       this.changeScreen('Data Entry 1')
     },
     changeScreen: function (newScreen) {
+      // changes the screen to Error if there is one to display, otherwise to the desired screen as long as it's one that should exist.
       if (!this.error) {
         if (this.validScreens.includes(newScreen)) {
           this.displayScreen = newScreen
@@ -47,13 +49,12 @@ var vueController = new Vue({ // eslint-disable-line no-unused-vars
       }
     },
     toggleInputMode: function () {
+      // toggles the file input mode and the delimiter for input parsing
       this.inputMode = (this.inputMode === 'text') ? 'file' : 'text'
       this.delimiter = (this.inputMode === 'text') ? ',' : '\r\n'
     },
-    toggleUI: function () {
-      this.displayUI = (this.displayUI === 'vue') ? 'react' : 'vue'
-    },
     handleFileInput: function (e, arrayNum) {
+      // reads data in from a file and stores it into the input string
       let reader = new FileReader()
       reader.onload = (e) => {
         this.inputString = e.target.result
@@ -77,6 +78,7 @@ var vueController = new Vue({ // eslint-disable-line no-unused-vars
         }
       }
       this.inputString = ''
+      // reset the input string and store the data in the appropriate array
       if (arrayNum === 1) {
         this.inputArrayOne = outputArray
       } else if (arrayNum === 2) {
@@ -87,18 +89,20 @@ var vueController = new Vue({ // eslint-disable-line no-unused-vars
       this.calcType = type
     },
     setXK: function () {
+      // parses the xK input to a number and stores it
       this.xK = Number(this.inputString)
     },
     performCalculation: function () {
+      // run the appropriate calculator
       if (this.calcType === 'correlation') {
         this.result = this.myCorrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo)
       } else if (this.calcType === 'regression') {
         this.result = this.myRegrCalc.runCalculator(this.inputArrayOne, this.inputArrayTwo, this.xK)
       }
       if (this.result.error) {
-        // if it's a string, there's an error
+        // if there is an error, store it for display.
         this.error = this.result.error
-      } // should probably add something to handle whether something else is returned e.g. null
+      }
     }
   },
   components: {

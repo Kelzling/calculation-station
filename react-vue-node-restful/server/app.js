@@ -89,6 +89,7 @@ app.get('/calc-regr', (req, res) => {
   // turn the result into JSON data
   let output = JSON.stringify(result)
   console.log(output)
+  // sends the data with an explicit status code of 200 to inform the requester that the get was successful
   res.status(200).send(output)
 })
 
