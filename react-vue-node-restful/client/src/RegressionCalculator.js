@@ -1,6 +1,11 @@
 import CorrelationCalculator from './CorrelationCalculator.js'
 
 class RegressionCalculator extends CorrelationCalculator {
+  initialiseCalculator () {
+    super.initialiseCalculator()
+    this.warning = ''
+  }
+  
   validateData (xArray, yArray) {
     super.validateData(xArray, yArray)
     if (xArray.length < 3) {
@@ -10,10 +15,9 @@ class RegressionCalculator extends CorrelationCalculator {
     }
   }
   
-  initialiseCalculator (newXArray, newYArray) {
-    this.warning = ''
+  addData (newXArray, newYArray) {
     try {
-      super.initialiseCalculator(newXArray, newYArray)
+      super.addData(newXArray, newYArray)
     } catch (error) {
       if (error.message === 'Not enough data points to run calculation') {
         this.error = error.message

@@ -4,13 +4,40 @@ describe("Correlation Calculator", function() {
   let testData2 = [15.0, 69.9, 6.5, 22.4, 28.4, 65.9, 19.4, 198.7, 38.8, 138.2]
   let testData3 = [1, 2, 3, 4]
   
-  describe("Initialising Calculator", function() {
-    beforeAll(function() {
-      calculator.initialiseCalculator(testData1, testData2)
+  describe("initialiseCalculator", function() {
+    it("should exist as a method", function() {
+      expect(calculator.initialiseCalculator).toBeDefined()
     })
     
-    it("initialiseCalculator method should exist", function () {
-      expect(calculator.initialiseCalculator).toBeDefined()
+    describe("should set all attributes to default values", function () {
+      beforeEach(function() {
+        calculator.initialiseCalculator()
+      })
+      
+      // only testing a few of them because otherwise this will get excessive.
+      
+      it("should have an empty xArray", function() {
+        expect(calculator.xArray).toEqual([])
+      })
+      
+      it("should have an xySum of 0", function () {
+        expect(calculator.xySum).toEqual(0)
+      })
+      
+      it("should have an empty result object", function () {
+        expect(calculator.result).toEqual({})
+      })
+    })
+  })
+  
+  describe("addData", function() {
+    beforeAll(function() {
+      calculator.initialiseCalculator()
+      calculator.addData(testData1, testData2)
+    })
+    
+    it("addData should exist as a method", function () {
+      expect(calculator.addData).toBeDefined()
     })
     
     it("xArray should exist as an array", function() {
@@ -84,7 +111,8 @@ describe("Correlation Calculator", function() {
   
   describe("calculateDataComponents", function() {
     beforeEach(function() {
-      calculator.initialiseCalculator(testData1, testData2)
+      calculator.initialiseCalculator()
+      calculator.addData(testData1, testData2)
       calculator.calculateDataComponents()
     })
     
@@ -124,7 +152,8 @@ describe("Correlation Calculator", function() {
   })
   
   describe("performCalculation", function() {
-    calculator.initialiseCalculator(testData1, testData2)
+    calculator.initialiseCalculator()
+    calculator.addData(testData1, testData2)
     calculator.calculateDataComponents()
     let result = calculator.performCalculation()
     
@@ -194,13 +223,13 @@ describe("Regression Calculator", function() {
   let testData3 = [1, 2, 3, 4]
   let testData4 = [42, 19]
   
-  describe("Initialising Calculator", function() {
-    it("initialiseCalculator method should exist", function() {
-      expect(calculator.initialiseCalculator).toBeDefined()
+  describe("addData", function() {
+    it("method should exist", function() {
+      expect(calculator.addData).toBeDefined()
     })
     
     it("should store an error message if not enough data is passed", function() {
-      calculator.initialiseCalculator(testData4, testData4)
+      calculator.addData(testData4, testData4)
       expect(calculator.error).toBe('Not enough data points to run calculation')
     })
   })
@@ -221,7 +250,8 @@ describe("Regression Calculator", function() {
   })
   
   describe("performCalculation", function() {
-    calculator.initialiseCalculator(testData1, testData2)
+    calculator.initialiseCalculator()
+    calculator.addData(testData1, testData2)
     calculator.calculateDataComponents()
     let result = calculator.performCalculation()
     
@@ -251,7 +281,8 @@ describe("Regression Calculator", function() {
   })
   
   describe("calculateYK", function() {
-    calculator.initialiseCalculator(testData1, testData2)
+    calculator.initialiseCalculator()
+    calculator.addData(testData1, testData2)
     calculator.calculateDataComponents()
     let result = calculator.performCalculation()
     

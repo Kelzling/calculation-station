@@ -1,4 +1,23 @@
 class CorrelationCalculator {
+  constructor () {
+    this.initialiseCalculator()
+  }
+  
+  initialiseCalculator () {
+    // (re)initialise all the class attributes
+    this.error = ''
+    this.xArray = []
+    this.yArray = []
+    this.xyArray = []
+    this.itemCount = 0
+    this.xSum = 0
+    this.ySum = 0
+    this.xySum = 0
+    this.xSqSum = 0
+    this.ySqSum = 0
+    this.result = {}
+  }
+  
   validateData (xArray, yArray) {
     // arrays must be the same length for the calculation to work correctly
     if (xArray.length !== yArray.length) {
@@ -6,9 +25,7 @@ class CorrelationCalculator {
     }
   }
   
-  initialiseCalculator (newXArray, newYArray) {
-    // not a constructor so the same calculator object can be reused for multiple calculations if desired after being initialised with no data
-    this.error = ''
+  addData (newXArray, newYArray) {
     try {
       this.validateData(newXArray, newYArray)
     } catch (error) {
@@ -31,14 +48,9 @@ class CorrelationCalculator {
     return result
   }
   
-/*   squareNumber(number) {
-    // this gets done a lot, separate function helps with readability (in theory)
-    return number * number
-  } */
-  
   multiplyArrayElements(arrayOne, arrayTwo) {
     // generates a new array where each element has been squared
-    let outputArray = inputOne.map((number, index) => {
+    let outputArray = arrayOne.map((number, index) => {
       return number * arrayTwo[index]
     })
     return outputArray
@@ -63,15 +75,17 @@ class CorrelationCalculator {
     let bottomLine = Math.sqrt(bottomLeft * bottomRight)
     
     // generate and output results
-    let result = {}
-    result.coefficient = topLine / bottomLine
-    result.coefficientSquared = this.squareNumber(result.coefficient)
-    return result
+    this.result.coefficient = topLine / bottomLine
+    this.result.coefficientSquared = Math.pow(this.result.coefficient, 2)
+    return this.result
   }
   
   runCalculator(newXArray, newYArray) {
     let output = null
-    this.initialiseCalculator(newXArray, newYArray)
+    if (this.result) {
+      this.initialiseCalculator()
+    }
+    this.addData(newXArray, newYArray)
     if (this.error) {
       output = { error: this.error }
     } else {

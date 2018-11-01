@@ -1,7 +1,11 @@
 const CorrelationCalculator = require('./CorrelationCalculator.js')
-// import CorrelationCalculator from './CorrelationCalculator.js'
 
 class RegressionCalculator extends CorrelationCalculator {
+  initialiseCalculator () {
+    super.initialiseCalculator()
+    this.warning = ''
+  }
+  
   validateData (xArray, yArray) {
     super.validateData(xArray, yArray)
     if (xArray.length < 3) {
@@ -11,10 +15,9 @@ class RegressionCalculator extends CorrelationCalculator {
     }
   }
   
-  initialiseCalculator (newXArray, newYArray) {
-    this.warning = ''
+  addData (newXArray, newYArray) {
     try {
-      super.initialiseCalculator(newXArray, newYArray)
+      super.addData(newXArray, newYArray)
     } catch (error) {
       if (error.message === 'Not enough data points to run calculation') {
         this.error = error.message
@@ -32,7 +35,7 @@ class RegressionCalculator extends CorrelationCalculator {
     let topLine = this.xySum - this.itemCount * xAvg * yAvg
     
     // calculate bottom line of the equation
-    let bottomLine = this.xSqSum - this.itemCount * this.squareNumber(xAvg)
+    let bottomLine = this.xSqSum - this.itemCount * Math.pow(xAvg, 2)
     
     // generate and output results
     let result = {}
@@ -58,5 +61,4 @@ class RegressionCalculator extends CorrelationCalculator {
   }
 }
 
-// export default RegressionCalculator
 module.exports = RegressionCalculator

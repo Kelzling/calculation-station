@@ -1,4 +1,23 @@
 class CorrelationCalculator {
+  constructor () {
+    this.initialiseCalculator()
+  }
+  
+  initialiseCalculator () {
+    // (re)initialise all the class attributes
+    this.error = ''
+    this.xArray = []
+    this.yArray = []
+    this.xyArray = []
+    this.itemCount = 0
+    this.xSum = 0
+    this.ySum = 0
+    this.xySum = 0
+    this.xSqSum = 0
+    this.ySqSum = 0
+    this.result = {}
+  }
+  
   validateData (xArray, yArray) {
     // arrays must be the same length for the calculation to work correctly
     if (xArray.length !== yArray.length) {
@@ -6,9 +25,7 @@ class CorrelationCalculator {
     }
   }
   
-  initialiseCalculator (newXArray, newYArray) {
-    // not a constructor so the same calculator object can be reused for multiple calculations if desired after being initialised with no data
-    this.error = ''
+  addData (newXArray, newYArray) {
     try {
       this.validateData(newXArray, newYArray)
     } catch (error) {
@@ -31,28 +48,21 @@ class CorrelationCalculator {
     return result
   }
   
-  squareNumber(number) {
-    // this gets done a lot, separate function helps with readability (in theory)
-    return number * number
-  }
-  
-  squareArrayElements(inputArray) {
+  multiplyArrayElements(arrayOne, arrayTwo) {
     // generates a new array where each element has been squared
-    let outputArray = inputArray.map(number => {
-      return this.squareNumber(number)
+    let outputArray = arrayOne.map((number, index) => {
+      return number * arrayTwo[index]
     })
     return outputArray
   }
   
   calculateDataComponents() {
-    this.xyArray = this.xArray.map((number, index) => {
-      return number * this.yArray[index]
-    })
+    this.xyArray = this.multiplyArrayElements(this.xArray, this.yArray)
     this.xSum = this.sumArrayElements(this.xArray)
     this.ySum = this.sumArrayElements(this.yArray)
     this.xySum = this.sumArrayElements(this.xyArray)
-    this.xSqSum = this.sumArrayElements(this.squareArrayElements(this.xArray))
-    this.ySqSum = this.sumArrayElements(this.squareArrayElements(this.yArray))
+    this.xSqSum = this.sumArrayElements(this.multiplyArrayElements(this.xArray, this.xArray))
+    this.ySqSum = this.sumArrayElements(this.multiplyArrayElements(this.yArray, this.yArray))
   }
   
   performCalculation() {
@@ -60,20 +70,22 @@ class CorrelationCalculator {
     let topLine = (this.itemCount * this.xySum) - (this.xSum * this.ySum)
     
     // bottom line of the calculation
-    let bottomLeft = this.itemCount * this.xSqSum - this.squareNumber(this.xSum)
-    let bottomRight = this.itemCount * this.ySqSum - this.squareNumber(this.ySum)
+    let bottomLeft = this.itemCount * this.xSqSum - Math.pow(this.xSum, 2)
+    let bottomRight = this.itemCount * this.ySqSum - Math.pow(this.ySum, 2)
     let bottomLine = Math.sqrt(bottomLeft * bottomRight)
     
     // generate and output results
-    let result = {}
-    result.coefficient = topLine / bottomLine
-    result.coefficientSquared = this.squareNumber(result.coefficient)
-    return result
+    this.result.coefficient = topLine / bottomLine
+    this.result.coefficientSquared = Math.pow(this.result.coefficient, 2)
+    return this.result
   }
   
   runCalculator(newXArray, newYArray) {
     let output = null
-    this.initialiseCalculator(newXArray, newYArray)
+    if (this.result) {
+      this.initialiseCalculator()
+    }
+    this.addData(newXArray, newYArray)
     if (this.error) {
       output = { error: this.error }
     } else {
